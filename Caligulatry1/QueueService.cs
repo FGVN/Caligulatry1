@@ -34,9 +34,13 @@ namespace Caligulatry1
             );
         }
 
-        public void AddQueue(Queue queue)
+        public bool AddQueue(Queue queue)
         {
             var data = GetQueues(queue._chatId);
+
+            if (data.Select(x=> x._listName).Contains(queue._listName) || queue._listName == "") {
+                return false;
+            }
 
             Console.WriteLine(queue);
 
@@ -58,6 +62,7 @@ namespace Caligulatry1
                 }),
                 data
             );
+            return true;
         }
         public List<Queue> GetQueues(long chatId)
         {
@@ -105,7 +110,7 @@ namespace Caligulatry1
         {
             List<Queue> data = GetQueues(chatId);
 
-            if (data.FirstOrDefault(x => x._listName == listName) == null)
+            if (!data.SelectMany(x => x._users).Contains(username) || !data.Select(x => x._listName).Contains(listName))
             {
                 return false;
             }

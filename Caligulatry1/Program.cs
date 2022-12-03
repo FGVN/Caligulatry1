@@ -8,7 +8,7 @@ namespace Caligulatry1
 {
     class Program
     {
-        private static string token { get; set; } = "1810086325:AAFEWIyvQo9MwmzHqvTBZjo42vqh9xBdeEs";
+        private static string token { get; set; } = "5815934880:AAHmEu3yr-V8Kpa47RhjZW_b8MSrcTvGLfU";
 
         private static TelegramBotClient client;
 
@@ -33,29 +33,36 @@ namespace Caligulatry1
             var msg = e.Message;
             QueueService service = new QueueService();
             bool response;
-            const string botname = "@PaterPatriae_bot";
+            const string botname = "@qqueue_bot";
 
             if (msg.Text != null)
             {
                 switch (msg.Text.Split(" ")[0])
                 {
-                    case "/queues@PaterPatriae_bot":
+                    case "/queues" + botname:
+                    case "/queues":
                         foreach(var item in service.GetQueues(msg.Chat.Id))
                         {
                             await client.SendTextMessageAsync(msg.Chat.Id, item.ToString());
                         }
                         break;
-                    case "/add_queue" + botname:
-                        await client.SendTextMessageAsync(msg.Chat.Id, "Enter queue name");
-                        break;
-                    case "/name" + botname:
-                        await client.SendTextMessageAsync(msg.Chat.Id, "List created!");
+                    case "/addqueue" + botname:
+                    case "/addqueue":
                         queue = new Queue(msg.Chat.Id, user, msg.Text.Replace(msg.Text.Split(" ")[0], ""), DateTime.Now);
-                        service.AddQueue(queue);
+                        response = service.AddQueue(queue);
+                        if (response)
+                        {
+                            await client.SendTextMessageAsync(msg.Chat.Id, "List created!");
+                        }
+                        else
+                        {
+                            await client.SendTextMessageAsync(msg.Chat.Id, "Name is empty or list with that name already exists");
+                        }
                         queue = new Queue();
                         break;
                     case "/addme" + botname:
-                        if(msg.Text.Split(" ").Length < 2)
+                    case "/addme":
+                        if (msg.Text.Split(" ").Length < 2)
                         {
                             await client.SendTextMessageAsync(msg.Chat.Id, "You need to enter queue name in format `/addme queue_name`");
                             break;
@@ -72,6 +79,7 @@ namespace Caligulatry1
                         break;
 
                     case "/removeme" + botname:
+                    case "/removeme":
                         response = service.RemoveUser(msg.Chat.Id, msg.Text.Replace(msg.Text.Split(" ")[0], ""), user);
                         if (response)
                         {
@@ -79,33 +87,11 @@ namespace Caligulatry1
                         }
                         else
                         {
-                            await client.SendTextMessageAsync(msg.Chat.Id, "Queue with such a name do not exist or you are already in it");
+                            await client.SendTextMessageAsync(msg.Chat.Id, "Queue with such a name do not exist or you are not in it");
                         }
                         break;
                 }
             }
-        }
-
-        private static IReplyMarkup GetButtons()
-        {
-                return new ReplyKeyboardMarkup
-                {
-                    Keyboard = new List<List<KeyboardButton>> {
-                         new List<KeyboardButton>{new KeyboardButton { Text = "/lists"}, new KeyboardButton { Text = "/add_list"} }
-                    }
-
-                };
-        }
-
-        private static IReplyMarkup GetListButtons()
-        {
-            return new ReplyKeyboardMarkup
-            {
-                Keyboard = new List<List<KeyboardButton>> {
-                         new List<KeyboardButton>{new KeyboardButton { Text = "/name"}, new KeyboardButton { Text = "Add List"} }
-                }
-
-            };
         }
     }
 }

@@ -37,7 +37,7 @@ namespace Caligulatry1
             {
                 usersStr +=  i +1 + " - " + _users[i].ToString() + "\n";
             }
-            return _listName + " by " + _creator + "\n" + "Due to: " + _date + "\n" + usersStr;
+            return _listName + " by " + _creator + "\n" + "Created on: " + _date + "\n" + usersStr;
         }
     }
 }
