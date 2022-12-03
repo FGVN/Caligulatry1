@@ -52,11 +52,11 @@ namespace Caligulatry1
                         response = service.AddQueue(queue);
                         if (response)
                         {
-                            await client.SendTextMessageAsync(msg.Chat.Id, "List created!");
+                            await client.SendTextMessageAsync(msg.Chat.Id, "Queue created!");
                         }
                         else
                         {
-                            await client.SendTextMessageAsync(msg.Chat.Id, "Name is empty or list with that name already exists");
+                            await client.SendTextMessageAsync(msg.Chat.Id, "Name is empty or queue with that name already exists");
                         }
                         queue = new Queue();
                         break;
@@ -88,6 +88,19 @@ namespace Caligulatry1
                         else
                         {
                             await client.SendTextMessageAsync(msg.Chat.Id, "Queue with such a name do not exist or you are not in it");
+                        }
+                        break;
+
+                    case "/deletequeue" + botname: 
+                    case "/deletequeue":
+                        response = service.DeleteQueue(msg.Chat.Id, msg.Text.Replace(msg.Text.Split(" ")[0], ""), user);
+                        if (response)
+                        {
+                            await client.SendTextMessageAsync(msg.Chat.Id, "Queue Deleted");
+                        }
+                        else
+                        {
+                            await client.SendTextMessageAsync(msg.Chat.Id, "You are not creator or such a queue do not exists");
                         }
                         break;
                 }

@@ -64,6 +64,36 @@ namespace Caligulatry1
             );
             return true;
         }
+
+        public bool DeleteQueue(long chatId, string listname, string username)
+        {
+            var data = GetQueues(chatId);
+            if(data.Select(x => x._listName).Contains(listname))
+            {
+                var queue = data.First(x => x._listName == listname);
+                if(queue._creator == username)
+                {
+                    data.RemoveAll(x => x._listName == listname);
+
+                    File.Delete(JsonFileName(chatId));
+
+                    CreateJson(JsonFileName(chatId));
+
+                    using var outputStream = File.OpenWrite(JsonFileName(chatId));
+
+                    JsonSerializer.Serialize<IEnumerable<Queue>>(
+                        new Utf8JsonWriter(outputStream, new JsonWriterOptions
+                        {
+                            SkipValidation = true,
+                            Indented = true
+                        }),
+                        data
+                    );
+                    return true;
+                }
+            }
+            return false;
+        }
         public List<Queue> GetQueues(long chatId)
         {
             if (!File.Exists(JsonFileName(chatId)))
