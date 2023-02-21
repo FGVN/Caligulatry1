@@ -10,6 +10,6 @@ RUN dotnet publish -c Release -o out
 
 # Build runtime image
 FROM mcr.microsoft.com/dotnet/aspnet:6.0
-WORKDIR /App
-COPY --from=build-env Caligulatry1/bin/Debug/netcoreapp6.0 .
+WORKDIR /Caligulatry1
+COPY --from=build-env /Caligulatry1 .
 ENTRYPOINT ["dotnet", "Caligulatry1.dll"]
